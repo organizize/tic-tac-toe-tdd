@@ -24,7 +24,7 @@ describe('React application', () => {
   beforeAndAfter();
 
   before(async () => {
-    browser = await puppeteer.launch({headless: false});
+    browser = await puppeteer.launch({headless: true});
     page = await browser.newPage();
   });
 

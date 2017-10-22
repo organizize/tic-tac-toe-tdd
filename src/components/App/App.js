@@ -2,19 +2,24 @@ import React from 'react';
 import Board from '../Board';
 import './App.scss';
 
-export const getGameStatus = board => {
-  const isGameWon = player =>
-    board[0].every(cell => cell === player);
-  return isGameWon('X') || isGameWon('O');
-};
+import {getGameStatus} from './utils/getGameStatus.js';
+import {PLAYER} from './constants';
+
+
+const INITIAL_BOARD = [
+  ['', '', ''],
+  ['', '', ''],
+  ['', '', ''],
+];
 
 class App extends React.Component {
   constructor() {
     super();
+
     this.state = {
-      board: [['', '', ''], ['', '', ''], ['', '', '']],
+      board: INITIAL_BOARD,
       winner: '',
-      nextPlayer: 'X'
+      nextPlayer: PLAYER.X,
     };
   }
 
@@ -29,30 +34,50 @@ class App extends React.Component {
   async load() {
     const response = await fetch('/api/game');
     const {board} = await response.json();
+
     this.setState({board});
   }
 
-  handleGameChange(rowI, cellI) {
+  handleGameChange(rowIdx, cellIdx) {
     const board = [...this.state.board];
     const nextPlayer = this.state.nextPlayer;
-    board[rowI][cellI] = nextPlayer;
+
+    board[rowIdx][cellIdx] = nextPlayer;
+
     if (getGameStatus(board)) {
       this.setState({winner: nextPlayer});
     }
-    const newNextPlayer = nextPlayer === 'X' ? 'O' : 'X';
-    this.setState({board, nextPlayer: newNextPlayer});
+
+    const newNextPlayer = nextPlayer === PLAYER.X ? PLAYER.O : PLAYER.X;
+
+    this.setState({
+      board,
+      nextPlayer: newNextPlayer
+    });
   }
+
   render() {
+    const {board, winner} = this.state;
+
+    const winnerMessage = winner && (
+      <div data-hook="winner-message" className="winner-message">
+        {`${winner} Wins!`}
+      </div>
+    );
+
+    const saveButton = <button onClick={() => this.save()} data-hook="save">Save</button>;
+    const loadButton = <button onClick={() => this.load()} data-hook="load">Load</button>;
+
     return (
       <div data-hook="app" className="root">
         <Board
-          board={this.state.board}
+          board={board}
           onGameChanged={(rowIndex, cellIndex) => this.handleGameChange(rowIndex, cellIndex)}
-          />
-        {this.state.winner && <div data-hook="winner-message" className="winner-message">{`${this.state.winner} Wins!`}</div>}
+        />
+        {winnerMessage}
         <div>
-          <button onClick={() => this.save()} data-hook="save">Save</button>
-          <button onClick={() => this.load()} data-hook="load">Load</button>
+          {saveButton}
+          {loadButton}
         </div>
       </div>
     );
