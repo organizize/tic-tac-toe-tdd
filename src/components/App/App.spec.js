@@ -67,4 +67,30 @@ describe('getGameStatus', () => {
     expect(getGameStatus(board)).to.equal(true);
   });
 
+  it('should identify vertical win', () => {
+    const board = [
+      ['X', '', ''],
+      ['X', '', ''],
+      ['X', '', '']
+    ];
+    expect(getGameStatus(board)).to.equal(true);
+  });
+
+  it('should identify a diagonal win', () => {
+    const board = [
+      ['X', '', ''],
+      ['', 'X', ''],
+      ['', '', 'X']
+    ];
+    expect(getGameStatus(board)).to.equal(true);
+  });
+
+  it('should identify a diagonal win', () => {
+    const board = [
+      ['', '', 'X'],
+      ['', 'X', ''],
+      ['X', '', '']
+    ];
+    expect(getGameStatus(board)).to.equal(true);
+  });
 });
