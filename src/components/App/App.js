@@ -5,7 +5,6 @@ import './App.scss';
 import {getGameStatus} from './utils/getGameStatus.js';
 import {PLAYER} from './constants';
 
-
 const INITIAL_BOARD = [
   ['', '', ''],
   ['', '', ''],
@@ -39,13 +38,22 @@ class App extends React.Component {
   }
 
   handleGameChange(rowIdx, cellIdx) {
-    const board = [...this.state.board];
+
+    const board = this.state.board.map(row => row.map(x => x));
     const nextPlayer = this.state.nextPlayer;
+
+    if (board[rowIdx][cellIdx]) {
+      return;
+    }
 
     board[rowIdx][cellIdx] = nextPlayer;
 
     if (getGameStatus(board)) {
-      this.setState({winner: nextPlayer});
+      this.setState({
+        board,
+        winner: nextPlayer
+      });
+      return;
     }
 
     const newNextPlayer = nextPlayer === PLAYER.X ? PLAYER.O : PLAYER.X;
