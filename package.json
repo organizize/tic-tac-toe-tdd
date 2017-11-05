@@ -26,16 +26,20 @@
     "jsdom": "^10.1.0",
     "jsdom-global": "^3.0.2",
     "nock": "^8.0.0",
-    "puppeteer": "^0.10.1",
+    "node-fetch": "^1.7.3",
+    "puppeteer": "^0.12",
     "react-addons-test-utils": "^15.3.2",
     "react-test-renderer": "^15.5.4",
     "sleep": "^5.1.1",
-    "yoshi": "latest"
+    "trier-promise": "^1.0.1",
+    "yoshi": "^1.1.316"
   },
   "dependencies": {
     "axios": "^0.16.1",
     "babel-polyfill": "^6.9.1",
     "bluebird": "^3.4.7",
+    "body-parser": "^1.18.2",
+    "classnames": "^2.2.5",
     "ejs": "^2.5.6",
     "express": "^4.13.4",
     "react": "^15.3.2",
@@ -49,7 +53,17 @@
     ]
   },
   "eslintConfig": {
-    "extends": "wix/react"
+    "extends": "wix/react",
+    "rules": {
+      "react/jsx-closing-bracket-location": [
+        "error",
+        "tag-aligned"
+      ],
+      "operator-linebreak": [
+        "error",
+        "before"
+      ]
+    }
   },
   "yoshi": {
     "cssModules": false
