@@ -7,7 +7,7 @@ import {BOARD_SIZE} from './constants';
 
 const HOOK = {
   CELL: '[data-hook="cell"]',
-  WINNER_MSG: '[data-hook="winner-message"]',
+  STATUS_MSG: '[data-hook="status-message"]',
 };
 
 const getCellIndex = (rowNum, cellNum) => (rowNum * BOARD_SIZE) + cellNum;
@@ -29,8 +29,8 @@ const getCellTextAt = (rowIdx, cellIdx) => wrapper
   .at(getCellIndex(rowIdx, cellIdx))
   .text();
 
-const getWinnerMessage = () => wrapper
-  .find(HOOK.WINNER_MSG)
+const getStatusMessage = () => wrapper
+  .find(HOOK.STATUS_MSG)
   .text();
 
 describe('App', () => {
@@ -52,7 +52,7 @@ describe('App', () => {
     clickACellAt(0, 1);
     clickACellAt(2, 0);
     clickACellAt(0, 2);
-    expect(getWinnerMessage()).to.equal('O Wins!');
+    expect(getStatusMessage()).to.equal('O Wins!');
   });
 
   it('should not be possible to make a move on non-empty cell', () => {
@@ -62,6 +62,24 @@ describe('App', () => {
     expect(getCellTextAt(0, 0)).to.equal('X');
     expect(getCellTextAt(0, 1)).to.equal('O');
   });
+
+  it('should display Tie message when game is tied', () => {
+      // ['X', '0', 'X'],
+      // ['0', '0', 'X'],
+      // ['X', 'X', '0']
+    clickACellAt(0, 0);
+    clickACellAt(0, 1);
+    clickACellAt(0, 2);
+    clickACellAt(1, 0);
+    clickACellAt(1, 2);
+    clickACellAt(1, 1);
+    clickACellAt(2, 0);
+    clickACellAt(2, 2);
+    clickACellAt(2, 1);
+    expect(getStatusMessage()).to.equal('Its a tie!');
+  });
+
+
 });
 
 describe('getGameStatus', () => {
@@ -71,7 +89,7 @@ describe('getGameStatus', () => {
       ['', '', ''],
       ['', '', '']
     ];
-    expect(getGameStatus(board)).to.equal(true);
+    expect(getGameStatus(board)).to.equal('X');
   });
 
   it('should identify vertical win', () => {
@@ -80,7 +98,7 @@ describe('getGameStatus', () => {
       ['X', '', ''],
       ['X', '', '']
     ];
-    expect(getGameStatus(board)).to.equal(true);
+    expect(getGameStatus(board)).to.equal('X');
   });
 
   it('should identify a diagonal win', () => {
@@ -89,7 +107,7 @@ describe('getGameStatus', () => {
       ['', 'X', ''],
       ['', '', 'X']
     ];
-    expect(getGameStatus(board)).to.equal(true);
+    expect(getGameStatus(board)).to.equal('X');
   });
 
   it('should identify a diagonal win', () => {
@@ -98,6 +116,16 @@ describe('getGameStatus', () => {
       ['', 'X', ''],
       ['X', '', '']
     ];
-    expect(getGameStatus(board)).to.equal(true);
+    expect(getGameStatus(board)).to.equal('X');
   });
+
+  it('should identify a draw', () => {
+    const board = [
+      ['X', '0', 'X'],
+      ['0', '0', 'X'],
+      ['X', 'X', '0']
+    ];
+    expect(getGameStatus(board)).to.equal('tie');
+  });
+
 });

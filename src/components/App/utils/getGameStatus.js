@@ -1,4 +1,4 @@
-import {PLAYER, BOARD_SIZE} from '../constants';
+import {PLAYER, STATUS, BOARD_SIZE} from '../constants';
 
 const getColumns = board => {
   const cols = [];
@@ -22,26 +22,37 @@ const getDiagonals = board => {
   return [diagonal1, diagonal2];
 };
 
+const getLines = board => board.concat(getColumns(board), getDiagonals(board));
+
 const everyCellEquals = value => arr => arr.every(item => item === value);
 
+const flatten = (flatArr, arr) => {
+  flatArr.push(...arr);
+  return flatArr;
+};
+
+const countEmptyCells = (count, cell) => cell ? count : count + 1;
+
+const getEmptyCellCount = board => board
+  .reduce(flatten, [])
+  .reduce(countEmptyCells, 0);
+
 export const getGameStatus = board => {
-  const isGameWon = player => {
-    if (board.some(everyCellEquals(player))) {
-      return true;
-    }
+  const isGameWon = player => getLines(board).some(everyCellEquals(player));
 
-    const columns = getColumns(board);
-    if (columns.some(everyCellEquals(player))) {
-      return true;
-    }
+  const isGameTied = () => getEmptyCellCount(board) === 0;
 
-    const diagonals = getDiagonals(board);
-    if (diagonals.some(everyCellEquals(player))) {
-      return true;
-    }
+  if (isGameWon(PLAYER.X)) {
+    return STATUS.X_WON;
+  }
 
-    return false;
-  };
+  if (isGameWon(PLAYER.O)) {
+    return STATUS.O_WON;
+  }
 
-  return isGameWon(PLAYER.X) || isGameWon(PLAYER.O);
+  if (isGameTied()) {
+    return STATUS.TIE;
+  }
+
+  return;
 };

@@ -17,7 +17,7 @@ class App extends React.Component {
 
     this.state = {
       board: INITIAL_BOARD,
-      winner: '',
+      gameStatus: null,
       nextPlayer: PLAYER.X,
     };
   }
@@ -38,38 +38,36 @@ class App extends React.Component {
   }
 
   handleGameChange(rowIdx, cellIdx) {
-
-    const board = this.state.board.map(row => row.map(x => x));
-    const nextPlayer = this.state.nextPlayer;
+    const {board, nextPlayer} = this.state;
 
     if (board[rowIdx][cellIdx]) {
       return;
     }
 
-    board[rowIdx][cellIdx] = nextPlayer;
+    const newBoard = board.map(row => row.map(x => x));
 
-    if (getGameStatus(board)) {
-      this.setState({
-        board,
-        winner: nextPlayer
-      });
-      return;
-    }
+    newBoard[rowIdx][cellIdx] = nextPlayer;
 
-    const newNextPlayer = nextPlayer === PLAYER.X ? PLAYER.O : PLAYER.X;
+    const newNextPlayer = nextPlayer === PLAYER.X
+      ? PLAYER.O
+      : PLAYER.X;
 
     this.setState({
-      board,
-      nextPlayer: newNextPlayer
+      board: newBoard,
+      gameStatus: getGameStatus(newBoard),
+      nextPlayer: newNextPlayer,
     });
   }
 
   render() {
-    const {board, winner} = this.state;
-
-    const winnerMessage = winner && (
-      <div data-hook="winner-message" className="winner-message">
-        {`${winner} Wins!`}
+    const {board, gameStatus} = this.state;
+    const statusMessage = gameStatus && (
+      <div data-hook="status-message" className="status-message">
+        {
+          gameStatus === 'tie'
+          ? 'Its a tie!'
+          : `${gameStatus} Wins!`
+        }
       </div>
     );
 
@@ -82,7 +80,7 @@ class App extends React.Component {
           board={board}
           onGameChanged={(rowIndex, cellIndex) => this.handleGameChange(rowIndex, cellIndex)}
         />
-        {winnerMessage}
+        {statusMessage}
         <div>
           {saveButton}
           {loadButton}
