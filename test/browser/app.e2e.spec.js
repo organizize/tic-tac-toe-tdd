@@ -1,5 +1,5 @@
-import {expect} from 'chai';
 import 'babel-polyfill';
+import {expect} from 'chai';
 import puppeteer from 'puppeteer';
 import {beforeAndAfter} from '../environment';
 import {testBaseUrl, eventually} from '../test-common';
@@ -27,6 +27,17 @@ const getStatusMessage = () =>
 
 const isStatusMessageVisible = async () =>
   (await page.$('[data-hook="status-message"]')) !== null;
+
+const getPlayerNames = async () =>
+  page.$$eval('[data-hook="player-name"]', elems => elems.map(el => el.innerText));
+
+const getClassnamesOfPlayerHeadings = () =>
+  page.$$eval('[data-hook="player-name"]', elems => elems.map(el => el.className));
+
+const isPlayerHighlighted = async playerIdx => {
+  const classNames = await getClassnamesOfPlayerHeadings();
+  return classNames[playerIdx].includes('active-player');
+};
 
 const save = async () => (await page.$('[data-hook="save"]')).click();
 
@@ -70,5 +81,26 @@ describe('React application', () => {
 
     return eventually(async () =>
       expect(await getCellTextAt(0)).to.equal('X'));
+  });
+
+  it('should show players', async () => {
+    await navigate();
+
+    const names = await getPlayerNames();
+
+    expect(names[0]).to.equal('X');
+    expect(names[1]).to.equal('O');
+  });
+
+  it('should highlight next player', async () => {
+    await navigate();
+
+    expect(await isPlayerHighlighted(0)).to.equal(true);
+    expect(await isPlayerHighlighted(1)).to.equal(false);
+
+    await clickACellAt(0, 0);
+
+    expect(await isPlayerHighlighted(0)).to.equal(false);
+    expect(await isPlayerHighlighted(1)).to.equal(true);
   });
 });

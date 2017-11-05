@@ -1,9 +1,10 @@
 import React from 'react';
+import classnames from 'classnames';
 import Board from '../Board';
 import './App.scss';
 
 import {getGameStatus} from './utils/getGameStatus.js';
-import {PLAYER} from './constants';
+import {PLAYER, STATUS} from './constants';
 
 const INITIAL_BOARD = [
   ['', '', ''],
@@ -60,11 +61,29 @@ class App extends React.Component {
   }
 
   render() {
-    const {board, gameStatus} = this.state;
+    const {board, gameStatus, nextPlayer} = this.state;
+
+    const playersHeader = (
+      <div>
+        <span
+          className={classnames({'active-player': nextPlayer === PLAYER.X})}
+          data-hook="player-name"
+        >
+          {PLAYER.X}
+        </span>
+        <span
+          className={classnames({'active-player': nextPlayer === PLAYER.O})}
+          data-hook="player-name"
+        >
+          {PLAYER.O}
+        </span>
+      </div>
+    );
+
     const statusMessage = gameStatus && (
       <div data-hook="status-message" className="status-message">
         {
-          gameStatus === 'tie'
+          gameStatus === STATUS.TIE
           ? 'Its a tie!'
           : `${gameStatus} Wins!`
         }
@@ -76,6 +95,7 @@ class App extends React.Component {
 
     return (
       <div data-hook="app" className="root">
+        {playersHeader}
         <Board
           board={board}
           onGameChanged={(rowIndex, cellIndex) => this.handleGameChange(rowIndex, cellIndex)}

@@ -39,6 +39,7 @@
     "babel-polyfill": "^6.9.1",
     "bluebird": "^3.4.7",
     "body-parser": "^1.18.2",
+    "classnames": "^2.2.5",
     "ejs": "^2.5.6",
     "express": "^4.13.4",
     "react": "^15.3.2",
@@ -54,8 +55,14 @@
   "eslintConfig": {
     "extends": "wix/react",
     "rules": {
-        "react/jsx-closing-bracket-location": ["error", "tag-aligned"],
-        "operator-linebreak": ["error", "before"]
+      "react/jsx-closing-bracket-location": [
+        "error",
+        "tag-aligned"
+      ],
+      "operator-linebreak": [
+        "error",
+        "before"
+      ]
     }
   },
   "yoshi": {
